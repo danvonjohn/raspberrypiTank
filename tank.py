@@ -1,12 +1,63 @@
 #packages
+from requests.exceptions import ConnectionError
+import requests
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+#Boot up
+#Green on
+GPIO.setup(23,GPIO.OUT)
+print ("Green LED on")
+GPIO.output(23,GPIO.HIGH)
+time.sleep(1)
+print ("Green LED off")
+GPIO.output(23,GPIO.LOW)
+#Yellow
+GPIO.setup(22,GPIO.OUT)
+print ("Yellow LED on")
+GPIO.output(22,GPIO.HIGH)
+time.sleep(1)
+print ("Yellow LED off")
+GPIO.output(22,GPIO.LOW)
+time.sleep(0.1)
+#Yellow and green
+print ("Yellow and Green LED on")
+GPIO.output(23,GPIO.HIGH)
+GPIO.output(22,GPIO.HIGH)
+time.sleep(1)
+print ("Yellow and Green LED off")
+GPIO.output(23,GPIO.LOW)
+GPIO.output(22,GPIO.LOW)
+#################################
 
 #Connection LED - Internet
 #LED - Green
 #Pin - 16
 #GPIO - 23
+
+def internetConnection():
+    try:
+       r = requests.get("http://google.com", timeout=1)
+    except ConnectionError as e:    # This is the correct syntax
+       print (e)
+       r = "No internet"
+       print (r)
+       GPIO.output(23,GPIO.LOW)
+       time.sleep(1)
+       serverCheck()
+    else:
+        print("Internet connection")
+        GPIO.output(23,GPIO.HIGH)
+        time.sleep(1)
+        serverCheck()
+internetConnection()
 ################################
 
 #Connection LED - Server
+
 ################################
 
 #Shutdown Button
