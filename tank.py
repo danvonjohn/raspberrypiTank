@@ -1,5 +1,6 @@
 #packages
 from requests.exceptions import ConnectionError
+import socket
 import requests
 import RPi.GPIO as GPIO
 import time
@@ -39,20 +40,17 @@ GPIO.output(22,GPIO.LOW)
 #GPIO - 23
 
 def internetConnection():
-    try:
-       r = requests.get("http://google.com", timeout=1)
-    except ConnectionError as e:    # This is the correct syntax
-       print (e)
-       r = "No internet"
-       print (r)
-       GPIO.output(23,GPIO.LOW)
-       time.sleep(1)
-       serverCheck()
+    IPaddress=socket.gethostbyname(socket.gethostname())
+    if IPaddress=="127.0.0.1":
+        print ("No internet connection")
+        GPIO.output(23,GPIO.LOW)
+        time.sleep(1)
+        internetConnection()
     else:
         print("Internet connection")
         GPIO.output(23,GPIO.HIGH)
         time.sleep(1)
-        serverCheck()
+        internetConnection()
 internetConnection()
 ################################
 
