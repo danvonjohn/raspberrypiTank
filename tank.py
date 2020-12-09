@@ -1,6 +1,7 @@
 #packages
 from requests.exceptions import ConnectionError
 import socket
+import keyboard
 import requests
 import RPi.GPIO as GPIO
 import time
@@ -23,6 +24,20 @@ GPIO.output(22,GPIO.HIGH)
 time.sleep(1)
 print ("Yellow LED off")
 GPIO.output(22,GPIO.LOW)
+#Red
+GPIO.setup(18,GPIO.OUT)
+print ("Yellow LED on")
+GPIO.output(18,GPIO.HIGH)
+time.sleep(1)
+print ("Yellow LED off")
+GPIO.output(18,GPIO.LOW)
+#Blue
+GPIO.setup(17,GPIO.OUT)
+print ("Yellow LED on")
+GPIO.output(17,GPIO.HIGH)
+time.sleep(1)
+print ("Yellow LED off")
+GPIO.output(17,GPIO.LOW)
 time.sleep(0.1)
 #Yellow and green
 print ("Yellow and Green LED on")
@@ -95,6 +110,16 @@ internetConnection()
 #LED - Red
 #Pin - 12
 #GPIO - 18
+
+GPIO.setup(18,GPIO.OUT)
+while True:  # making a loop
+    try:  # used try so that if user pressed other than the given key error will not be shown
+        if keyboard.is_pressed('a'):  # if key 'q' is pressed 
+            print ("Green LED on")
+            GPIO.output(18,GPIO.HIGH)
+            break  # finishing the loop
+    except:
+        break  # if user pressed a key other than the given key the loop will break
 ################################
 
 #Turn Right
