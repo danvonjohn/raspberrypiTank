@@ -1,13 +1,18 @@
 #packages
 from requests.exceptions import ConnectionError
 import socket
-import keyboard
 import requests
 import RPi.GPIO as GPIO
 import time
+import os
+import subprocess
+import multiprocessing
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+
+os.system("sudo service apache2 start")
+print("server is starting")
 
 #Boot up
 #Green on
@@ -53,24 +58,42 @@ GPIO.output(22,GPIO.LOW)
 #LED - Green
 #Pin - 16
 #GPIO - 23
-
 def internetConnection():
-    IPaddress=socket.gethostbyname(socket.gethostname())
-    if IPaddress=="127.0.0.1":
-        print ("No internet connection")
-        GPIO.output(23,GPIO.LOW)
-        time.sleep(1)
-        internetConnection()
+    try:
+       r = requests.get("http://google.com", timeout=1)
+    except ConnectionError as e:    # This is the correct syntax
+       print (e)
+       r = "No response"
+       print (r)
+       GPIO.output(23,GPIO.LOW)
+       time.sleep(1)
+       internetConnection()
     else:
-        print("Internet connection")
+        print("Internet Connection")
         GPIO.output(23,GPIO.HIGH)
         time.sleep(1)
         internetConnection()
-internetConnection()
 ################################
 
 #Connection LED - Server
-
+#LED - Yellow
+#Pin - 15
+#GPIO - 22
+def serverConnection():
+    try:
+       r = requests.get("http://localhost/", timeout=1)
+    except ConnectionError as e:    # This is the correct syntax
+       print (e)
+       r = "No response"
+       print (r)
+       GPIO.output(22,GPIO.LOW)
+       time.sleep(1)
+       serverConnection()
+    else:
+        print("Server Connection")
+        GPIO.output(22,GPIO.HIGH)
+        time.sleep(1)
+        serverConnection()
 ################################
 
 #Shutdown Button
@@ -80,27 +103,15 @@ internetConnection()
 ################################
 
 #Battery LED High
-#LED - Yellow
-#Pin - 15
-#GPIO - 22
 ################################
 
 #Battery LED Med
-#LED - Yellow
-#Pin - 15
-#GPIO - 22
 ################################
 
 #Battery LED Low
-#LED - Yellow
-#Pin - 15
-#GPIO - 22
 ################################
 
 #Battery LED Low Flashing
-#LED - Yellow
-#Pin - 15
-#GPIO - 22
 ################################
 
 #Forward
@@ -111,15 +122,6 @@ internetConnection()
 #Pin - 12
 #GPIO - 18
 
-GPIO.setup(18,GPIO.OUT)
-while True:  # making a loop
-    try:  # used try so that if user pressed other than the given key error will not be shown
-        if keyboard.is_pressed('a'):  # if key 'q' is pressed 
-            print ("Green LED on")
-            GPIO.output(18,GPIO.HIGH)
-            break  # finishing the loop
-    except:
-        break  # if user pressed a key other than the given key the loop will break
 ################################
 
 #Turn Right
@@ -127,3 +129,16 @@ while True:  # making a loop
 #Pin - 11
 #GPIO - 17
 ################################
+        
+        
+#Multiprocesing the functions
+#declare the functions that are to be multiprocessed
+p1 = multiprocessing.Process(target=internetConnection,args=[])
+p2 = multiprocessing.Process(target=serverConnection,args=[])
+
+#call the multiprocessing functions
+if __name__ == '__main__':
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
