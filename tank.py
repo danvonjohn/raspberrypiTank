@@ -7,9 +7,33 @@ import time
 import os
 import subprocess
 import multiprocessing
+from gpiozero import CamJamKitRobot  # Import the CamJam GPIO Zero Library 
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+# Set the GPIO Pin mode
+GPIO.setup(7, GPIO.OUT)
+GPIO.setup(8, GPIO.OUT)
+GPIO.setup(9, GPIO.OUT)
+GPIO.setup(10, GPIO.OUT)
+# Turn all motors off
+GPIO.output(7, 0)
+GPIO.output(8, 0)
+GPIO.output(9, 0)
+GPIO.output(10, 0)
+
+robot = CamJamKitRobot() 
+
+# Turn the motors on robot.forward() 
+GPIO.output(10,GPIO.HIGH)
+GPIO.output(8,GPIO.HIGH)
+# Wait for 1 seconds time.sleep(1) 
+time.sleep(10)
+# Turn the motors off robot.stop()
+GPIO.output(10, GPIO.LOW)
+GPIO.output(8, GPIO.LOW)
+#Motor test
+print("Motor test complete")
 
 os.system("sudo service apache2 start")
 print("server is starting")
